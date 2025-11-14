@@ -1,5 +1,3 @@
-// index.js — Node 后端入口
-
 import express from "express";
 import "dotenv/config";
 import cors from "cors";
@@ -10,12 +8,15 @@ import Lab5 from "./Lab5/index.js";
 
 import UserRoutes from "./Kambaz/Users/routes.js";
 import CourseRoutes from "./Kambaz/Courses/routes.js";
+import ModulesRoutes from "./Kambaz/Modules/routes.js";
+
 import db from "./Kambaz/Database/index.js";
 
-// 1️⃣ 创建 app （必须第一步）
 const app = express();
 
-// 2️⃣ CORS（必须放最前面）
+/***********************
+ * 1️⃣ CORS 最前面
+ ***********************/
 app.use(
   cors({
     credentials: true,
@@ -23,35 +24,35 @@ app.use(
   })
 );
 
-// 3️⃣ Session 配置
-const sessionOptions = {
-  secret: process.env.SESSION_SECRET || "kambaz",
-  resave: false,
-  saveUninitialized: false,
-};
+/***********************
+ * 2️⃣ Session
+ ***********************/
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "kambaz-secret",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 
-if (process.env.SERVER_ENV !== "development") {
-  sessionOptions.proxy = true;
-  sessionOptions.cookie = {
-    sameSite: "none",
-    secure: true,
-    domain: process.env.SERVER_URL,
-  };
-}
-
-app.use(session(sessionOptions));
-
-// 4️⃣ Body parser
+/***********************
+ * 3️⃣ Body parser
+ ***********************/
 app.use(express.json());
 
-// 5️⃣ 所有 routes（必须在 json 之后）
+/***********************
+ * 4️⃣ All routes AFTER json
+ ***********************/
 Hello(app);
 Lab5(app);
 UserRoutes(app, db);
 CourseRoutes(app, db);
+ModulesRoutes(app, db);
 
-// 6️⃣ 启动服务
+/***********************
+ * 5️⃣ Start server
+ ***********************/
 const port = process.env.PORT || 4000;
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`Server is running on port ${port}`);
 });

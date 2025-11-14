@@ -3,13 +3,14 @@ import EnrollmentsDao from "../Enrollments/dao.js";
 
 export default function CourseRoutes(app, db) {
   const dao = CoursesDao(db);
-  const enrollmentsDao = EnrollmentsDao(db);
+  const enrollDao = EnrollmentsDao(db);
 
+  // 1. 获取全部课程（测试用）
   const findAllCourses = (req, res) => {
-    const courses = dao.findAllCourses();
-    res.json(courses);
+    res.json(dao.findAllCourses());
   };
 
+  // 2. 获取当前用户课程
   const findCoursesForEnrolledUser = (req, res) => {
     let { userId } = req.params;
 
@@ -22,30 +23,36 @@ export default function CourseRoutes(app, db) {
       userId = currentUser._id;
     }
 
-    const courses = dao.findCoursesForEnrolledUser(userId);
-    res.json(courses);
+    res.json(dao.findCoursesForEnrolledUser(userId));
   };
 
+  // 3. 创建课程 + 自动 enroll
   const createCourse = (req, res) => {
     const currentUser = req.session["currentUser"];
+    if (!currentUser) return res.sendStatus(401);
+
     const newCourse = dao.createCourse(req.body);
-    enrollmentsDao.enrollUserInCourse(currentUser._id, newCourse._id);
+    enrollDao.enrollUserInCourse(currentUser._id, newCourse._id);
+
     res.json(newCourse);
   };
 
+  // 4. 删除课程
   const deleteCourse = (req, res) => {
     const { courseId } = req.params;
-    const status = dao.deleteCourse(courseId);
-    res.json(status);
+    dao.deleteCourse(courseId);
+    enrollDao.unenrollCourse(courseId);
+    res.sendStatus(200);
   };
 
+  // 5. 更新课程
   const updateCourse = (req, res) => {
     const { courseId } = req.params;
-    const status = dao.updateCourse(courseId, req.body);
-    res.json(status);
+    const updated = dao.updateCourse(courseId, req.body);
+    res.json(updated);
   };
 
-  // ---------------- Routes ----------------
+  // ========== Routes ==========
   app.get("/api/courses", findAllCourses);
   app.get("/api/users/:userId/courses", findCoursesForEnrolledUser);
 

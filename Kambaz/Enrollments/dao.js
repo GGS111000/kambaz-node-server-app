@@ -9,5 +9,14 @@ export default function EnrollmentsDao(db) {
     });
   }
 
-  return { enrollUserInCourse };
+  function unenrollCourse(courseId) {
+    db.enrollments = db.enrollments.filter(
+      (e) => e.course !== courseId
+    );
+  }
+
+  return {
+    enrollUserInCourse,
+    unenrollCourse,
+  };
 }
