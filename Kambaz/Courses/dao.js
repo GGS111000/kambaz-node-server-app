@@ -1,33 +1,42 @@
 import { v4 as uuidv4 } from "uuid";
 
 export default function CoursesDao(db) {
-  const findAllCourses = () => db.courses;
+  function findAllCourses() {
+    return db.courses;
+  }
 
-  const findCoursesForEnrolledUser = (userId) => {
+  function findCoursesForEnrolledUser(userId) {
     const { courses, enrollments } = db;
-
     return courses.filter((course) =>
       enrollments.some(
-        (e) => e.user === userId && e.course === course._id
+        (enrollment) =>
+          enrollment.user === userId && enrollment.course === course._id
       )
     );
-  };
+  }
 
-  const createCourse = (course) => {
+  function createCourse(course) {
     const newCourse = { ...course, _id: uuidv4() };
-    db.courses.push(newCourse);
+    db.courses = [...db.courses, newCourse];
     return newCourse;
-  };
+  }
 
-  const deleteCourse = (courseId) => {
-    db.courses = db.courses.filter((c) => c._id !== courseId);
-  };
+  function deleteCourse(courseId) {
+    const { courses, enrollments } = db;
+    db.courses = courses.filter((course) => course._id !== courseId);
+    db.enrollments = enrollments.filter(
+      (enrollment) => enrollment.course !== courseId
+    );
+    return { status: "OK" };
+  }
 
-  const updateCourse = (courseId, updates) => {
-    const course = db.courses.find((c) => c._id === courseId);
-    Object.assign(course, updates);
+  function updateCourse(courseId, courseUpdates) {
+    const { courses } = db;
+    const course = courses.find((c) => c._id === courseId);
+    if (!course) return { status: "NOT_FOUND" };
+    Object.assign(course, courseUpdates);
     return course;
-  };
+  }
 
   return {
     findAllCourses,
