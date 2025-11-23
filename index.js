@@ -1,53 +1,55 @@
-import express from "express";
 import "dotenv/config";
+import express from "express";
+import mongoose from "mongoose";
 import cors from "cors";
 import session from "express-session";
 
-import Hello from "./Hello.js";
-import Lab5 from "./Lab5/index.js";
 
-import UserRoutes from "./Kambaz/Users/routes.js";
-import CourseRoutes from "./Kambaz/Courses/routes.js";
-import ModulesRoutes from "./Kambaz/Modules/routes.js";
-import EnrollmentsRoutes from "./Kambaz/Enrollments/routes.js";
-import AssignmentsRoutes from "./Kambaz/Assignments/routes.js";
+// 连接 MongoDB
+const CONNECTION_STRING =
+  process.env.DATABASE_CONNECTION_STRING ||
+  "mongodb://127.0.0.1:27017/kambaz";
 
-import db from "./Kambaz/Database/index.js";
+mongoose.connect(CONNECTION_STRING);
 
 const app = express();
 
-/** 1️⃣ CORS */
+// 设置 CORS
 app.use(
   cors({
+    origin: process.env.CLIENT_URL,
     credentials: true,
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
   })
 );
 
-/** 2️⃣ Session */
+// 设置 session
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "kambaz-secret",
+    secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
   })
 );
 
-/** 3️⃣ JSON body */
 app.use(express.json());
 
-/** 4️⃣ Routes */
-Hello(app);
-Lab5(app);
+// 加载 Users 的路由
+import UserRoutes from "./Kambaz/Users/routes.js";
+UserRoutes(app);
 
-UserRoutes(app, db);
-CourseRoutes(app, db);
-ModulesRoutes(app, db);
-EnrollmentsRoutes(app, db);
-AssignmentsRoutes(app, db);
+import CourseRoutes from "./Kambaz/Courses/routes.js";
+import ModuleRoutes from "./Kambaz/Modules/routes.js";
+import AssignmentRoutes from "./Kambaz/Assignments/routes.js";
 
-/** 5️⃣ Start server */
-const port = process.env.PORT || 4000;
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+CourseRoutes(app);
+ModuleRoutes(app);
+AssignmentRoutes(app);
+
+
+
+
+// 启动服务器
+app.listen(process.env.PORT || 4000, () => {
+  console.log("🔥 Server running at http://localhost:4000");
+  console.log("🔥 Connected to MongoDB:", CONNECTION_STRING);
 });
