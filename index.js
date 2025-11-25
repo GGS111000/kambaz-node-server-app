@@ -3,21 +3,16 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import session from "express-session";
-
-
 // 连接 MongoDB
 const CONNECTION_STRING =
   process.env.DATABASE_CONNECTION_STRING ||
   "mongodb://127.0.0.1:27017/kambaz";
-
 mongoose.connect(CONNECTION_STRING);
-
 const app = express();
-
-// 设置 CORS
+// 设 CORS
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: true,
     credentials: true,
   })
 );
