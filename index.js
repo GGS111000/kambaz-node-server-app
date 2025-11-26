@@ -23,13 +23,21 @@ app.use(
 );
 
 // 设置 session
+// 让 express-session 在 Render 这种代理后面工作
+app.set("trust proxy", 1);
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
+    cookie: {
+      secure: true,        // 在 https 上必须设 true
+      sameSite: "none",    // 允许跨站点发送 cookie（Vercel → Render）
+    },
   })
 );
+
 
 app.use(express.json());
 
