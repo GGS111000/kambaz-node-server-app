@@ -1,36 +1,30 @@
-import AssignmentsDao from "./dao.js";
+import * as dao from "./dao.js";
 
-export default function AssignmentsRoutes(app, db) {
-  const dao = AssignmentsDao(db);
+export default function AssignmentRoutes(app) {
 
-  const findAssignmentsForCourse = (req, res) => {
-    const { courseId } = req.params;
-    const list = dao.findAssignmentsForCourse(courseId);
-    res.json(list);
-  };
+  app.get("/api/courses/:cid/assignments", async (req, res) => {
+    const assignments = await dao.findAssignmentsForCourse(req.params.cid);
+    res.json(assignments);
+  });
 
-  const createAssignmentForCourse = (req, res) => {
-    const { courseId } = req.params;
-    const assignment = { ...req.body, course: courseId };
-    const newAssignment = dao.createAssignment(assignment);
+  app.get("/api/assignments/:aid", async (req, res) => {
+    const assignment = await dao.findAssignmentById(req.params.aid);
+    res.json(assignment);
+  });
+
+  app.post("/api/courses/:cid/assignments", async (req, res) => {
+    const newAssignment = await dao.createAssignment(req.params.cid, req.body);
     res.json(newAssignment);
-  };
+  });
 
-  const deleteAssignment = (req, res) => {
-    const { assignmentId } = req.params;
-    const status = dao.deleteAssignment(assignmentId);
+  app.put("/api/assignments/:aid", async (req, res) => {
+    const status = await dao.updateAssignment(req.params.aid, req.body);
     res.json(status);
-  };
+  });
 
-  const updateAssignment = (req, res) => {
-    const { assignmentId } = req.params;
-    const updates = req.body;
-    const status = dao.updateAssignment(assignmentId, updates);
+  app.delete("/api/assignments/:aid", async (req, res) => {
+    const status = await dao.deleteAssignment(req.params.aid);
     res.json(status);
-  };
+  });
 
-  app.get("/api/courses/:courseId/assignments", findAssignmentsForCourse);
-  app.post("/api/courses/:courseId/assignments", createAssignmentForCourse);
-  app.delete("/api/assignments/:assignmentId", deleteAssignment);
-  app.put("/api/assignments/:assignmentId", updateAssignment);
 }

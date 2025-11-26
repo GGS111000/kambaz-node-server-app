@@ -3,6 +3,11 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import session from "express-session";
+import AssignmentRoutes from "./Kambaz/Assignments/routes.js"; 
+import CourseRoutes from "./Kambaz/Courses/routes.js";
+import ModuleRoutes from "./Kambaz/Modules/routes.js";
+import UserRoutes from "./Kambaz/Users/routes.js";
+
 // 连接 MongoDB
 const CONNECTION_STRING =
   process.env.DATABASE_CONNECTION_STRING ||
@@ -28,19 +33,10 @@ app.use(
 
 app.use(express.json());
 
-// 加载 Users 的路由
-import UserRoutes from "./Kambaz/Users/routes.js";
 UserRoutes(app);
-
-import CourseRoutes from "./Kambaz/Courses/routes.js";
-import ModuleRoutes from "./Kambaz/Modules/routes.js";
-import AssignmentRoutes from "./Kambaz/Assignments/routes.js";
-
 CourseRoutes(app);
 ModuleRoutes(app);
 AssignmentRoutes(app);
-
-
 
 
 // 启动服务器
