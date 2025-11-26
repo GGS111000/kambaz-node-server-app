@@ -3,7 +3,7 @@ import moduleSchema from "../Modules/schema.js";
 
 const courseSchema = new mongoose.Schema({
    _id: String,
-   name: String,
+   title: String,
    number: String,
    credits: Number,
    description: String,
