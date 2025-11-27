@@ -3,7 +3,7 @@ import model from "./model.js";
 
 export default function CoursesDao() {
   function findAllCourses() {
-    return model.find({}, { name: 1, description: 1 });
+    return model.find({});
   }
 
   async function findCoursesForEnrolledUser(userId) {
@@ -30,12 +30,15 @@ export default function CoursesDao() {
   function updateCourse(courseId, courseUpdates) {
     return model.updateOne({ _id: courseId }, { $set: courseUpdates });
   }
-
+  function findCourseById(courseId) {
+    return model.findById(courseId);
+  }
   return {
     findAllCourses,
     findCoursesForEnrolledUser,
     createCourse,
     deleteCourse,
     updateCourse,
+    findCourseById,
   };
 }

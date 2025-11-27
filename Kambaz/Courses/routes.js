@@ -54,10 +54,13 @@ export default function CourseRoutes(app) {
 
   /** PUT: Update Course */
   const updateCourse = async (req, res) => {
-    const { courseId } = req.params;
-    const status = await dao.updateCourse(courseId, req.body);
-    res.json(status);
-  };
+  const { courseId } = req.params;
+
+  await dao.updateCourse(courseId, req.body);
+  const full = await model.findById(courseId);
+  res.json(full);
+};
+
 
   /** POST: Enroll user in course */
   const enrollUserInCourse = async (req, res) => {
