@@ -13,12 +13,12 @@ export default function EnrollmentsDao() {
   }
 
   function enrollUserInCourse(userId, courseId) {
-    return model.create({
-      user: userId,
-      course: courseId,
-      _id: `${userId}-${courseId}`,
-    });
-  }
+  return model.create({
+    user: userId,
+    course: courseId,
+  });
+}
+
 
   function unenrollUserFromCourse(userId, courseId) {
     return model.deleteOne({ user: userId, course: courseId });
