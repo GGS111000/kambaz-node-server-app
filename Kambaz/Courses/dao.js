@@ -3,33 +3,30 @@ import model from "./model.js";
 import EnrollmentsDao from "../Enrollments/dao.js";
 
 export default function CoursesDao() {
-
   const enrollmentsDao = EnrollmentsDao();
 
-  /** 1. GET all courses */
+  // 所有课程
   function findAllCourses() {
-    // 必须返回完整课程，不再只返回部分字段
     return model.find({});
   }
 
-  /** 2. GET courses for a specific enrolled user */
+  // 某个用户选了哪些课（目前没直接用，但保留）
   async function findCoursesForEnrolledUser(userId) {
-    // 使用 EnrollmentDao 正确查课程，不再用 db.enrollments
     return enrollmentsDao.findCoursesForUser(userId);
   }
 
-  /** 3. CREATE course */
+  // 创建课程
   function createCourse(course) {
     const newCourse = { ...course, _id: uuidv4() };
     return model.create(newCourse);
   }
 
-  /** 4. DELETE course */
+  // 删除课程（具体删 enrollment 在 Routes 里处理）
   function deleteCourse(courseId) {
     return model.deleteOne({ _id: courseId });
   }
 
-  /** 5. UPDATE course */
+  // 更新课程
   function updateCourse(courseId, courseUpdates) {
     return model.updateOne(
       { _id: courseId },
@@ -37,7 +34,7 @@ export default function CoursesDao() {
     );
   }
 
-  /** 6. GET one course by ID */
+  // 根据 ID 查课程
   function findCourseById(courseId) {
     return model.findById(courseId);
   }

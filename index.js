@@ -8,6 +8,7 @@ import AssignmentRoutes from "./Kambaz/Assignments/routes.js";
 import CourseRoutes from "./Kambaz/Courses/routes.js";
 import ModuleRoutes from "./Kambaz/Modules/routes.js";
 import UserRoutes from "./Kambaz/Users/routes.js";
+import EnrollmentsRoutes from "./Kambaz/Enrollments/routes.js";
 
 // ------------------------------
 // 1. CONNECT TO MONGODB
@@ -73,7 +74,7 @@ UserRoutes(app);
 CourseRoutes(app);
 ModuleRoutes(app);
 AssignmentRoutes(app);
-
+EnrollmentsRoutes(app);
 // ------------------------------
 // 7. START SERVER
 // ------------------------------
