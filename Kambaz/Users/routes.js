@@ -83,16 +83,37 @@ export default function UserRoutes(app) {
       res.json(status);
   };
 
+// const updateUser = async (req, res) => {
+//     const { userId } = req.params;
+//     const userUpdates = req.body;
+
+//     await dao.updateUser(userId, userUpdates);
+//     const currentUser = req.session["currentUser"];
+//    if (currentUser && currentUser._id === userId) {
+//      req.session["currentUser"] = { ...currentUser, ...userUpdates };
+//    }
+//     res.json(currentUser);
+//   };
 const updateUser = async (req, res) => {
-    const { userId } = req.params;
-    const userUpdates = req.body;
-    await dao.updateUser(userId, userUpdates);
-    const currentUser = req.session["currentUser"];
-   if (currentUser && currentUser._id === userId) {
-     req.session["currentUser"] = { ...currentUser, ...userUpdates };
-   }
-    res.json(currentUser);
-  };
+  const { userId } = req.params;
+  const updates = req.body;
+
+  // 1. Update DB
+  await dao.updateUser(userId, updates);
+
+  // 2. Get fresh version
+  const updated = await dao.findUserById(userId);
+
+  // 3. Merge with session if needed (保留你之前的修复)
+  if (req.session.currentUser && req.session.currentUser._id === userId) {
+    req.session.currentUser = { ...req.session.currentUser, ...updates };
+  }
+
+  // 4. Send updated data
+  res.json(updated);
+};
+
+
 const createUser = async (req, res) => {
     const user = await dao.createUser(req.body);
     res.json(user);
@@ -102,7 +123,7 @@ const createUser = async (req, res) => {
   app.post("/api/users/signin", signin);
   app.post("/api/users/signup", signup);
   app.post("/api/users/profile", profile);   // ✅ 对应前端 client.profile()
-  app.put("/api/users/profile", updateProfile); // ✅ 对应前端 updateUser()
+  //app.put("/api/users/profile", updateProfile); // ✅ 对应前端 updateUser()
   app.post("/api/users/signout", signout);
   app.get("/api/users", findAllUsers);
   app.get("/api/users/:userId", findUserById);
