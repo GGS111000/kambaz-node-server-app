@@ -78,8 +78,9 @@ CourseRoutes(app);
 ModuleRoutes(app);
 AssignmentRoutes(app);
 EnrollmentsRoutes(app);
-Lab5Routes(app);
 QuizRoutes(app);
+Lab5Routes(app);
+
 // ------------------------------
 // 7. START SERVER
 // ------------------------------
