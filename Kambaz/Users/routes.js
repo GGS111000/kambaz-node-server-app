@@ -6,8 +6,12 @@ export default function UserRoutes(app) {
 
   // 登录
   const signin = async (req, res) => {
+
     const { username, password } = req.body;
+
     const user = await dao.findUserByCredentials(username, password);
+    console.log(user);
+    console.log("request", req.body);
     if (!user) {
       res.status(401).json({ message: "Invalid credentials" });
     } else {
